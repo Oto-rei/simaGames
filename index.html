@@ -1,0 +1,99 @@
+<script src="processing.js"></script>
+<script type="text/processing" data-processing-target="processing-canvas">
+
+  int num =40;
+  float[]CX=new float [num];
+  float[]CY=new float [num];
+  //雲たちのx座標の移動速度
+  float a=1.5;
+  //雲たちのy座標の移動速度
+  float b=0;
+  String  message="GAME OVER";
+  String success="GAME CLEAR!!";
+  //クリア文字座標
+  float sX;
+  float pi=0;
+
+  void setup(){
+    size(1500,700);
+    for(int i=0;i<num;i++){
+      CX[i]=random(0,width*2);
+      CY[i]=random(20,height-20);
+      CX[i]-=width*2;
+    }
+    sX=width*(-3);
+  }
+
+  void draw(){
+    background(125,211,255);
+    
+    for(int i=0;i<num;i++){
+      CX[i]+=a;
+      b=sin(radians(pi)+i);
+      CY[i]+=b;
+      cloud(CX[i],CY[i]);
+      pi+=0.01;
+     }
+     sima(mouseX,mouseY);
+     textSize(100);
+     //↓横幅大体500、見え始めるのは-480ぐらい
+     text(success,sX,100);
+     sX+=a;
+     //GameOver処理
+    for (int i=0;i<num;i++){
+      if (CX[i]>=mouseX-100&&CX[i]<=mouseX+100&&CY[i]<=mouseY+70&&CY[i]>=mouseY-50)
+      {
+        a=0;
+        text(message,550,100);
+        noLoop();
+      }
+    }
+    //GameClear処理
+    if(sX==550){
+      noLoop();
+    }
+    //println(sX);
+  }
+      void sima(float x,float y){
+        pushMatrix();
+        translate(x,y);
+        noStroke();
+
+        //tail
+        fill(100);
+        quad(0,40,0,45,95,30,95,0);
+
+        //body
+        stroke(255);
+        strokeWeight(85);
+        line(0,0,0,40);
+        line(0,40,30,40);
+
+        //eye
+        noStroke();
+        fill(100);
+        ellipse(-15,-10,8,8);
+
+        //beak
+        triangle(-50,0,-40,-10,-40,0);
+
+        //wing
+        pushMatrix();
+        rotate(-0.3);
+        translate(25,35);
+        rotate(sin(millis()/1000)*(0.5));
+        ellipse(0,0,50,80);
+        popMatrix();
+        popMatrix();
+      }
+
+      void cloud(float cloudX,float cloudY){
+        noStroke();
+        fill(255);
+        ellipse(cloudX,cloudY,90,50);
+        ellipse(cloudX+20,cloudY-10,80,50);
+        ellipse(cloudX-10,cloudY+15,110,50);
+      }
+      
+</script>
+<canvas id="processing-canvas"></canvas>
